@@ -14,11 +14,11 @@ do_compile(){
     cat <<EOF > ${WORKDIR}/uEnv.txt
 
 setenv machine_name nxp-imx6
-setenv loadenvscript ext4load mmc \${mmcdev}:2 \${loadaddr} /boot/loader/uEnv.txt
+setenv loadenvscript ext4load mmc \${mmcdev}:2 \${loadaddr} /loader/uEnv.txt
 run loadenvscript  && env import -t \${loadaddr} 0x40000
-setenv loadkernel ext4load mmc \${mmcdev}:2 \${loadaddr} /boot/\${kernel_image}
-setenv loadramdisk ext4load mmc \${mmcdev}:2 \${initrd_addr} /boot/\${ramdisk_image}
-setenv loaddtb ext4load mmc \${mmcdev}:2 \${fdt_addr} /boot/\${bootdir}/\${fdt_file}
+setenv loadkernel ext4load mmc \${mmcdev}:2 \${loadaddr} /\${kernel_image}
+setenv loadramdisk ext4load mmc \${mmcdev}:2 \${initrd_addr} /\${ramdisk_image}
+setenv loaddtb ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir}/\${fdt_file}
 run loadramdisk
 run loaddtb
 run loadkernel
