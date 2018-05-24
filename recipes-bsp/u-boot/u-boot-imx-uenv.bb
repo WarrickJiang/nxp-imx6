@@ -22,7 +22,7 @@ setenv loaddtb ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir}/\${fdt_file}
 run loadramdisk
 run loaddtb
 run loadkernel
-setenv bootargs \${bootargs} console=\${console},\${baudrate} \${smp} rdinit=/linuxrc root=/dev/ram0
+setenv bootargs \${bootargs} console=\${console},\${baudrate} \${smp}
 bootz \${loadaddr} \${initrd_addr} \${fdt_addr}
 EOF
 
