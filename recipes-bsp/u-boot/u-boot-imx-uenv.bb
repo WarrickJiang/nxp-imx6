@@ -16,12 +16,15 @@ do_compile(){
 setenv machine_name nxp-imx6
 setenv loadenvscript ext4load mmc \${mmcdev}:2 \${loadaddr} /loader/uEnv.txt
 run loadenvscript  && env import -t \${loadaddr} 0x40000
-setenv loadkernel ext4load mmc \${mmcdev}:2 \${loadaddr} /\${kernel_image}
-setenv loadramdisk ext4load mmc \${mmcdev}:2 \${initrd_addr} /\${ramdisk_image}
-setenv loaddtb ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir}/\${fdt_file}
+setenv rollback_flag no
+if test -n \${rollback_f} && test \${rollback_f} = yes && test -n \${kernel_image2} && test -n \${ramdisk_image2} && test -n \${bootdir2} && test -n \${bootargs2};then setenv rollback_flag yes; echo "Perform rollback";fi
+setenv loadkernel if test \${rollback_flag} = no\; then ext4load mmc \${mmcdev}:2 \${loadaddr} /\${kernel_image}\; else ext4load mmc \${mmcdev}:2 \${loadaddr} /\${kernel_image2}\;fi\;
+setenv loadramdisk if test \${rollback_flag} = no\; then ext4load mmc \${mmcdev}:2 \${initrd_addr} /\${ramdisk_image}\; else ext4load mmc \${mmcdev}:2 \${initrd_addr} /\${ramdisk_image2}\;fi\;
+setenv loaddtb if test \${rollback_flag} = no\; then ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir}\${fdt_file}\; else ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir2}\${fdt_file}\;fi\;
 run loadramdisk
 run loaddtb
 run loadkernel
+if test \${rollback_flag} = no; then setenv bootargs \${bootargs}; else setenv bootargs \${bootargs2};fi;
 setenv bootargs \${bootargs} console=\${console},\${baudrate} \${smp}
 bootz \${loadaddr} \${initrd_addr} \${fdt_addr}
 EOF
