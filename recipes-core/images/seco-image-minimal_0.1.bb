@@ -21,5 +21,8 @@ IMAGE_INSTALL += "packagegroup-core-boot \
 IMAGE_INSTALL += "libmodbus"
 IMAGE_INSTALL += "nodejs"
 
+# Utils and firmware for WiFi
+IMAGE_INSTALL += "linux-firmware-wl18xx iw wpa-supplicant"
+
 inherit flux-ota core-image
 inherit builder-base
