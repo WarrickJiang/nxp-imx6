@@ -14,6 +14,7 @@ CUBE_DOM_GW_EXTRA_INSTALL ?= ""
 IMAGE_FSTYPES = "tar.bz2"
 
 IMAGE_INSTALL += "packagegroup-core-boot \
+                  packagegroup-core-full-cmdline \
 		  flatpak \
                   "
 #Customer required
