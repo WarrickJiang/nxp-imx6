@@ -21,6 +21,9 @@ IMAGE_INSTALL += "packagegroup-core-boot \
 IMAGE_INSTALL += "libmodbus"
 IMAGE_INSTALL += "nodejs"
 
+# For 4G modem
+IMAGE_INSTALL += "ppp"
+
 # Utils and firmware for WiFi
 IMAGE_INSTALL += "linux-firmware-wl18xx iw wpa-supplicant"
 
