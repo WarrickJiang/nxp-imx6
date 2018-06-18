@@ -14,18 +14,24 @@ do_compile(){
     cat <<EOF > ${WORKDIR}/uEnv.txt
 
 setenv machine_name nxp-imx6
-setenv loadenvscript ext4load mmc \${mmcdev}:2 \${loadaddr} /loader/uEnv.txt
+setenv fdt_file ${SECO_DEFAULT_DTB}
+setenv mmcpart 5
+setenv rootpart ostree_root=LABEL=otaroot
+setenv bootpart
+setenv mmcpart_r 7
+setenv rootpart_r ostree_root=LABEL=otaroot_b
+setenv bootpart_r ostree_boot=LABEL=otaboot_b
+if fatload mmc \${mmcdev}:1 \${fdt_addr} boot_b_flag;then setenv mmcpart 7;setenv rootpart ostree_root=LABEL=otaroot_b;setenv bootpart ostree_boot=LABEL=otaboot_b;setenv mmcpart_r 5; setenv rootpart_r ostree_root=LABEL=otaroot; setenv bootpart_r ostree_boot=LABEL=otaboot;echo "using B, rollback A";else echo "using A, rollback B";fi
+if test -n \${rollback_f} && test \${rollback_f} = yes;then setenv mmcpart \${mmcpart_r}; setenv rootpart \${rootpart_r}; setenv bootpart \${bootpart_r}; echo "Perform rollback";fi
+setenv loadenvscript ext4load mmc \${mmcdev}:\${mmcpart} \${loadaddr} /loader/uEnv.txt
 run loadenvscript  && env import -t \${loadaddr} 0x40000
-setenv rollback_flag no
-if test -n \${rollback_f} && test \${rollback_f} = yes && test -n \${kernel_image2} && test -n \${ramdisk_image2} && test -n \${bootdir2} && test -n \${bootargs2};then setenv rollback_flag yes; echo "Perform rollback";fi
-setenv loadkernel if test \${rollback_flag} = no\; then ext4load mmc \${mmcdev}:2 \${loadaddr} /\${kernel_image}\; else ext4load mmc \${mmcdev}:2 \${loadaddr} /\${kernel_image2}\;fi\;
-setenv loadramdisk if test \${rollback_flag} = no\; then ext4load mmc \${mmcdev}:2 \${initrd_addr} /\${ramdisk_image}\; else ext4load mmc \${mmcdev}:2 \${initrd_addr} /\${ramdisk_image2}\;fi\;
-setenv loaddtb if test \${rollback_flag} = no\; then ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir}\${fdt_file}\; else ext4load mmc \${mmcdev}:2 \${fdt_addr} /\${bootdir2}\${fdt_file}\;fi\;
+setenv loadkernel ext4load mmc \${mmcdev}:\${mmcpart} \${loadaddr} /\${kernel_image}
+setenv loadramdisk ext4load mmc \${mmcdev}:\${mmcpart} \${initrd_addr} /\${ramdisk_image}
+setenv loaddtb ext4load mmc \${mmcdev}:\${mmcpart} \${fdt_addr} /\${bootdir}/\${fdt_file}
 run loadramdisk
 run loaddtb
 run loadkernel
-if test \${rollback_flag} = no; then setenv bootargs \${bootargs}; else setenv bootargs \${bootargs2};fi;
-setenv bootargs \${bootargs} console=\${console},\${baudrate} \${smp}
+setenv bootargs \${bootargs} \${bootpart} \${rootpart} console=\${console},\${baudrate} \${smp}
 bootz \${loadaddr} \${initrd_addr} \${fdt_addr}
 EOF
 
