@@ -6,6 +6,7 @@ SRC_URI += " \
 	file://0002-b08-introduce-dts.patch \
 	file://0003-seco_b08-enable-usb.patch \
 	file://0004-b08-update-usb3503-hub-driver.patch \
+	file://0005-C23-Add-preliminary-support-for-C23-board.patch \
 	file://seco_b08.cfg \
 "
 
