@@ -27,5 +27,8 @@ IMAGE_INSTALL += "ppp"
 # Utils and firmware for WiFi
 IMAGE_INSTALL += "linux-firmware-wl18xx iw wpa-supplicant"
 
+# netifd
+IMAGE_INSTALL += "netifd"
+
 inherit flux-ota core-image
 inherit builder-base
