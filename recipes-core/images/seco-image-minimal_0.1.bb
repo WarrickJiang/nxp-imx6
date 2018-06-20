@@ -30,5 +30,8 @@ IMAGE_INSTALL += "linux-firmware-wl18xx iw wpa-supplicant"
 # netifd
 IMAGE_INSTALL += "netifd"
 
+# Watchdog
+IMAGE_INSTALL += "watchdog"
+
 inherit flux-ota core-image
 inherit builder-base
