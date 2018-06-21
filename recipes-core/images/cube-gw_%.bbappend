@@ -8,3 +8,6 @@ IMAGE_INSTALL += "mtdev"
 #Customer required
 IMAGE_INSTALL += "libmodbus"
 IMAGE_INSTALL += "nodejs"
+
+# Watchdog
+IMAGE_INSTALL += "watchdog"
