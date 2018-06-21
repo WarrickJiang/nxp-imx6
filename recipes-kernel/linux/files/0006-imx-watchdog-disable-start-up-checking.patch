@@ -1,0 +1,35 @@
+From ed5e5c4c2fbb101831d366a5861ea74b4d73cffb Mon Sep 17 00:00:00 2001
+From: Jiang Lu <lu.jiang@windriver.com>
+Date: Thu, 21 Jun 2018 18:06:42 +0800
+Subject: [PATCH] imx-watchdog:disable start up checking
+
+uboot may enable watchdog for boot failure detection,
+no need to check whether watchdog is running at startup.
+
+Signed-off-by: Jiang Lu <lu.jiang@windriver.com>
+---
+ drivers/watchdog/imx2_wdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
+index f3352aa04f64..e30c6898ecb5 100644
+--- a/drivers/watchdog/imx2_wdt.c
++++ b/drivers/watchdog/imx2_wdt.c
+@@ -312,12 +312,12 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
+ 	watchdog_set_nowayout(wdog, nowayout);
+ 	watchdog_set_restart_priority(wdog, 128);
+ 	watchdog_init_timeout(wdog, timeout, &pdev->dev);
+-
++#if 0
+ 	if (imx2_wdt_is_running(wdev)) {
+ 		imx2_wdt_set_timeout(wdog, wdog->timeout);
+ 		set_bit(WDOG_HW_RUNNING, &wdog->status);
+ 	}
+-
++#endif
+ 	/*
+ 	 * Disable the watchdog power down counter at boot. Otherwise the power
+ 	 * down counter will pull down the #WDOG interrupt line for one clock
+-- 
+2.14.3
+
