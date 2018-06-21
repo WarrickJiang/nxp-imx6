@@ -16,12 +16,12 @@ do_compile(){
 setenv machine_name nxp-imx6
 setenv fdt_file ${SECO_DEFAULT_DTB}
 setenv mmcpart 5
-setenv rootpart ostree_root=LABEL=otaroot
-setenv bootpart
+setenv rootpart ostree_root=LABEL=\${labelpre}otaroot
+setenv bootpart ostree_boot=LABEL=\${labelpre}otaboot
 setenv mmcpart_r 7
-setenv rootpart_r ostree_root=LABEL=otaroot_b
-setenv bootpart_r ostree_boot=LABEL=otaboot_b
-if fatload mmc \${mmcdev}:1 \${fdt_addr} boot_b_flag;then setenv mmcpart 7;setenv rootpart ostree_root=LABEL=otaroot_b;setenv bootpart ostree_boot=LABEL=otaboot_b;setenv mmcpart_r 5; setenv rootpart_r ostree_root=LABEL=otaroot; setenv bootpart_r ostree_boot=LABEL=otaboot;echo "using B, rollback A";else echo "using A, rollback B";fi
+setenv rootpart_r ostree_root=LABEL=\${labelpre}otaroot_b
+setenv bootpart_r ostree_boot=LABEL=\${labelpre}otaboot_b
+if fatload mmc \${mmcdev}:1 \${fdt_addr} boot_b_flag;then setenv mmcpart 7;setenv rootpart ostree_root=LABEL=\${labelpre}otaroot_b;setenv bootpart ostree_boot=LABEL=\${labelpre}otaboot_b;setenv mmcpart_r 5; setenv rootpart_r ostree_root=LABEL=\${labelpre}otaroot; setenv bootpart_r ostree_boot=LABEL=\${labelpre}otaboot;echo "using B, rollback A";else echo "using A, rollback B";fi
 if test -n \${rollback_f} && test \${rollback_f} = yes;then setenv mmcpart \${mmcpart_r}; setenv rootpart \${rootpart_r}; setenv bootpart \${bootpart_r}; echo "Perform rollback";fi
 setenv loadenvscript ext4load mmc \${mmcdev}:\${mmcpart} \${loadaddr} /loader/uEnv.txt
 run loadenvscript  && env import -t \${loadaddr} 0x40000
@@ -31,7 +31,7 @@ setenv loaddtb ext4load mmc \${mmcdev}:\${mmcpart} \${fdt_addr} /\${bootdir}/\${
 run loadramdisk
 run loaddtb
 run loadkernel
-setenv bootargs \${bootargs} \${bootpart} \${rootpart} console=\${console},\${baudrate} \${smp}
+setenv bootargs \${bootargs} \${bootpart} \${rootpart} console=\${console},\${baudrate} \${smp} flux=\${labelpre}fluxdata
 bootz \${loadaddr} \${initrd_addr} \${fdt_addr}
 EOF
 
