@@ -21,7 +21,15 @@ setenv bootpart ostree_boot=LABEL=\${labelpre}otaboot
 setenv mmcpart_r 7
 setenv rootpart_r ostree_root=LABEL=\${labelpre}otaroot_b
 setenv bootpart_r ostree_boot=LABEL=\${labelpre}otaboot_b
-if fatload mmc \${mmcdev}:1 \${fdt_addr} boot_b_flag;then setenv mmcpart 7;setenv rootpart ostree_root=LABEL=\${labelpre}otaroot_b;setenv bootpart ostree_boot=LABEL=\${labelpre}otaboot_b;setenv mmcpart_r 5; setenv rootpart_r ostree_root=LABEL=\${labelpre}otaroot; setenv bootpart_r ostree_boot=LABEL=\${labelpre}otaboot;echo "using B, rollback A";else echo "using A, rollback B";fi
+setenv abflag A
+if fatload mmc \${mmcdev}:1 \${fdt_addr} boot_ab_flag;then setexpr.l abflagv *\${fdt_addr}; if test \${abflagv} = 42333231;then setenv abflag B;fi;fi
+setexpr fdt_addr1 \${fdt_addr} + 2
+setexpr fdt_addr2 \${fdt_addr} + 200
+mw.l \${fdt_addr2} 52570030
+setenv switchab if test \${abflag} = B\\;then setenv abflag A\\;mw.l \${fdt_addr} 41333231\\;else setenv abflag B\\;mw.l \${fdt_addr} 42333231\\;fi\\;fatwrite mmc \${mmcdev}:1 \${fdt_addr} boot_ab_flag 4
+if fatload mmc \${mmcdev}:1 \${fdt_addr} boot_cnt;then setexpr.w cntv0 *\${fdt_addr1}; if test \${cntv0} = 5257;then setexpr.b cntv *\${fdt_addr};if test \${cntv} > 32;then run switchab;else setexpr.b cntv \${cntv} + 1;mw.b \${fdt_addr2} \${cntv};fi;fi;fi
+fatwrite mmc \${mmcdev}:1 \${fdt_addr2} boot_cnt 4
+if test \${abflag} = B; then setenv mmcpart 7;setenv rootpart ostree_root=LABEL=\${labelpre}otaroot_b;setenv bootpart ostree_boot=LABEL=\${labelpre}otaboot_b;setenv mmcpart_r 5; setenv rootpart_r ostree_root=LABEL=\${labelpre}otaroot; setenv bootpart_r ostree_boot=LABEL=\${labelpre}otaboot;echo "B as active, A as rollback";else echo "A as active, B as rollback";fi
 if test -n \${rollback_f} && test \${rollback_f} = yes;then setenv mmcpart \${mmcpart_r}; setenv rootpart \${rootpart_r}; setenv bootpart \${bootpart_r}; echo "Perform rollback";fi
 setenv loadenvscript ext4load mmc \${mmcdev}:\${mmcpart} \${loadaddr} /loader/uEnv.txt
 run loadenvscript  && env import -t \${loadaddr} 0x40000
