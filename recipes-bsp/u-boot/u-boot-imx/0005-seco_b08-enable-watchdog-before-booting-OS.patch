@@ -1,0 +1,112 @@
+From f27fec01872c41f010a3b3c6909c56d6c4a06f9c Mon Sep 17 00:00:00 2001
+From: Jiang Lu <lu.jiang@windriver.com>
+Date: Mon, 28 May 2018 11:15:27 +0800
+Subject: [PATCH] seco_b08:enable watchdog before booting OS
+
+Enable watchdog timer before booting OS.
+
+Watchdog timer timeout value is load from wdttimeout environment variable.
+
+If need disable watchdog, set this value to 0.
+
+Signed-off-by: Jiang Lu <lu.jiang@windriver.com>
+---
+ arch/arm/imx-common/cpu.c       | 3 +++
+ drivers/watchdog/imx_watchdog.c | 9 +++++++++
+ include/configs/mx6sxsabresd.h  | 9 +++++++++
+ include/configs/seco_b08.h      | 9 ++++++++-
+ 4 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/imx-common/cpu.c b/arch/arm/imx-common/cpu.c
+index 2272d2d..866f0f2 100644
+--- a/arch/arm/imx-common/cpu.c
++++ b/arch/arm/imx-common/cpu.c
+@@ -309,6 +309,9 @@ void arch_preboot_os(void)
+ #if defined(CONFIG_VIDEO_MXS)
+ 	lcdif_power_down();
+ #endif
++#ifdef CONFIG_IMX_WATCHDOG
++	hw_watchdog_init();
++#endif
+ }
+ 
+ void set_chipselect_size(int const cs_size)
+diff --git a/drivers/watchdog/imx_watchdog.c b/drivers/watchdog/imx_watchdog.c
+index 43a83da..ee0a65f 100644
+--- a/drivers/watchdog/imx_watchdog.c
++++ b/drivers/watchdog/imx_watchdog.c
+@@ -24,6 +24,7 @@ void hw_watchdog_init(void)
+ {
+ 	struct watchdog_regs *wdog = (struct watchdog_regs *)WDOG1_BASE_ADDR;
+ 	u16 timeout;
++	ulong watchdog_val = 0;
+ 
+ 	/*
+ 	 * The timer watchdog can be set between
+@@ -34,6 +35,14 @@ void hw_watchdog_init(void)
+ #define CONFIG_WATCHDOG_TIMEOUT_MSECS 128000
+ #endif
+ 	timeout = (CONFIG_WATCHDOG_TIMEOUT_MSECS / 500) - 1;
++
++	if (!getenv("wdttimeout"))
++		return ;
++	watchdog_val = getenv_ulong("wdttimeout", 10, 120);
++	if (!watchdog_val)
++		return 0;
++	timeout = (watchdog_val / 500) - 1;
++
+ 	writew(WCR_WDZST | WCR_WDBG | WCR_WDE | WCR_WDT | WCR_SRS |
+ 		SET_WCR_WT(timeout), &wdog->wcr);
+ 	hw_watchdog_reset();
+diff --git a/include/configs/mx6sxsabresd.h b/include/configs/mx6sxsabresd.h
+index ca37142..413a76c 100644
+--- a/include/configs/mx6sxsabresd.h
++++ b/include/configs/mx6sxsabresd.h
+@@ -221,8 +221,17 @@
+ /* PMIC */
+ #define CONFIG_POWER
+ #define CONFIG_POWER_I2C
++#if 0
+ #define CONFIG_POWER_PFUZE100
+ #define CONFIG_POWER_PFUZE100_I2C_ADDR	0x08
++#else
++#define CONFIG_POWER_PFUZE3000
++#define CONFIG_POWER_PFUZE3000_I2C_ADDR	0x08
++#define PFUZE3000_I2C_BUS	0
++#define PFUZE3000_SW1AB_SETP(x)    ((x - 7000) / 250)
++#define PFUZE3000_SW3_SETP(x)      ((x - 9000) / 500)
++#define PFUZE3000_VLDO_SETP(x)     ((x - 8000) / 500)
++#endif
+ 
+ /* Network */
+ #define CONFIG_CMD_PING
+diff --git a/include/configs/seco_b08.h b/include/configs/seco_b08.h
+index 866e26f..958f844 100644
+--- a/include/configs/seco_b08.h
++++ b/include/configs/seco_b08.h
+@@ -136,6 +136,12 @@
+ #define CONFIG_POWER_PFUZE3000_I2C_ADDR	0x08
+ #define PFUZE3000_I2C_BUS	0
+ 
++/*Watchdog*/
++#define CONFIG_IMX_WATCHDOG
++#define CONFIG_WATCHDOG_TIMEOUT_MSECS 128000
++
++#define CONFIG_FAT_WRITE
++
+ /* Command definition */
+ /*
+ #include <config_cmd_default.h>
+@@ -276,7 +282,8 @@
+ 		"else " \
+ 			"bootz; " \
+ 		"fi;\0" \
+-	"rollback=setenv rollback_f yes;boot"
++	"rollback=setenv rollback_f yes;boot;\0" \
++	"wdttimeout=120000\0"
+ 
+ #define CONFIG_BOOTCOMMAND \
+ 	   "mmc dev ${mmcdev};" \
+-- 
+2.7.4
+

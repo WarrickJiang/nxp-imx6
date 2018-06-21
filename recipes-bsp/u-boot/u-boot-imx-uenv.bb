@@ -39,6 +39,7 @@ setenv loaddtb ext4load mmc \${mmcdev}:\${mmcpart} \${fdt_addr} /\${bootdir}/\${
 run loadramdisk
 run loaddtb
 run loadkernel
+setenv wdttimeout 120000
 setenv bootargs \${bootargs} \${bootpart} \${rootpart} console=\${console},\${baudrate} \${smp} flux=\${labelpre}fluxdata
 bootz \${loadaddr} \${initrd_addr} \${fdt_addr}
 EOF
