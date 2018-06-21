@@ -7,6 +7,7 @@ SRC_URI += " \
 	file://0003-seco_b08-enable-usb.patch \
 	file://0004-b08-update-usb3503-hub-driver.patch \
 	file://0005-C23-Add-preliminary-support-for-C23-board.patch \
+	file://0006-imx-watchdog-disable-start-up-checking.patch \
 	file://seco_b08.cfg \
 "
 
