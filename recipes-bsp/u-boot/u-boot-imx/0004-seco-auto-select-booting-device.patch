@@ -1,0 +1,41 @@
+From 432dffb71feaf793521a969140f6be6cbd7e7b2d Mon Sep 17 00:00:00 2001
+From: Jiang Lu <lu.jiang@windriver.com>
+Date: Thu, 21 Jun 2018 11:40:10 +0800
+Subject: [PATCH] seco:auto select booting device
+
+When booting from microsd, mmc deivice is 0 in bootloader.
+When booting from eMMC, mmc device is 1 in bootloader and partition label must use eMMC_ prefix.
+
+Signed-off-by: Jiang Lu <lu.jiang@windriver.com>
+---
+ board/freescale/b08/b08.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/board/freescale/b08/b08.c b/board/freescale/b08/b08.c
+index 572be48..aca13e1 100644
+--- a/board/freescale/b08/b08.c
++++ b/board/freescale/b08/b08.c
+@@ -919,6 +919,20 @@ void board_late_mmc_init(void)
+ 	if (!check_mmc_autodetect())
+ 		return;
+ 
++	switch (dev_no) {
++	case 0:
++		puts("Boot from microSD\n");
++		break;
++	case 2:
++		puts("Boot from eMMC\n");
++		setenv("labelpre", "emmc_");
++		dev_no = 1;
++		break;
++	default:
++		puts("Boot from unknown device\n");
++		return 0;
++	}
++
+ 	setenv_ulong("mmcdev", dev_no);
+ 
+ 	/* Set mmcblk env */
+-- 
+2.7.4
+
