@@ -33,5 +33,7 @@ IMAGE_INSTALL += "netifd"
 # Watchdog
 IMAGE_INSTALL += "watchdog"
 
+IMAGE_INSTALL += "upgrade-mgr"
+
 inherit flux-ota core-image
 inherit builder-base
