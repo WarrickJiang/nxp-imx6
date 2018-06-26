@@ -68,15 +68,21 @@ fi
 
 #TOOD:pull-local
 #ostree pull-local --repo=/tmp/sysroot_b/ostree/repo /sysroot/ostree/repo/ pulsar-linux:cube-gw-ostree-runtime
+branch=`ls /tmp/sysroot_b/ostree/repo/refs/remotes/pulsar-linux/ | sed -n '1p'`
 
-ostree pull --repo=/tmp/sysroot_b/ostree/repo pulsar-linux:cube-gw-ostree-runtime
+if [ -z '${branch}' ]; then
+	echo "No branch found, try default cube-gw"
+	branch=cube-gw-ostree-runtime
+fi
+
+ostree pull --repo=/tmp/sysroot_b/ostree/repo pulsar-linux:${branch}
 testval=$?
 if [ $testval -ne 0 ]; then
 	echo "Ostree pull failed"
 	cleanup
 fi
 
-ostree admin --sysroot=/tmp/sysroot_b/ deploy --os=pulsar-linux cube-gw-ostree-runtime
+ostree admin --sysroot=/tmp/sysroot_b/ deploy --os=pulsar-linux ${branch}
 testval=$?
 if [ $testval -ne 0 ]; then
 	echo "Ostree deploy failed"
@@ -84,8 +90,8 @@ if [ $testval -ne 0 ]; then
 fi
 
 
-umount ${upboot} /tmp/sysroot_b/boot
-umount ${uproot} /tmp/sysroot_b
+umount ${upboot}
+umount ${uproot}
 
 mount ${rootpart} /tmp/sysroot_b
 echo "123"${abflag} > /tmp/sysroot_b/boot_ab_flag
