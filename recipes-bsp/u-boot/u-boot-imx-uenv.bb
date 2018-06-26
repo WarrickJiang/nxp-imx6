@@ -14,7 +14,7 @@ do_compile(){
     cat <<EOF > ${WORKDIR}/uEnv.txt
 
 setenv machine_name nxp-imx6
-setenv fdt_file ${SECO_DEFAULT_DTB}
+if test \${skip_script_fdt} != yes; then setenv fdt_file ${SECO_DEFAULT_DTB}; fi
 setenv mmcpart 5
 setenv rootpart ostree_root=LABEL=\${labelpre}otaroot
 setenv bootpart ostree_boot=LABEL=\${labelpre}otaboot
@@ -36,10 +36,10 @@ run loadenvscript  && env import -t \${loadaddr} 0x40000
 setenv loadkernel ext4load mmc \${mmcdev}:\${mmcpart} \${loadaddr} /\${kernel_image}
 setenv loadramdisk ext4load mmc \${mmcdev}:\${mmcpart} \${initrd_addr} /\${ramdisk_image}
 setenv loaddtb ext4load mmc \${mmcdev}:\${mmcpart} \${fdt_addr} /\${bootdir}/\${fdt_file}
+if test \${skip_script_wd} != yes; then setenv wdttimeout 120000; fi
 run loadramdisk
 run loaddtb
 run loadkernel
-setenv wdttimeout 120000
 setenv bootargs \${bootargs} \${bootpart} \${rootpart} console=\${console},\${baudrate} \${smp} flux=\${labelpre}fluxdata
 bootz \${loadaddr} \${initrd_addr} \${fdt_addr}
 EOF
