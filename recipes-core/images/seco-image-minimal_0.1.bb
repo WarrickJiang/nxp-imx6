@@ -34,6 +34,11 @@ IMAGE_INSTALL += "netifd"
 IMAGE_INSTALL += "watchdog"
 
 IMAGE_INSTALL += "upgrade-mgr"
+IMAGE_INSTALL += "e2fsprogs \
+	e2fsprogs-tune2fs \
+	parted \
+"
+
 
 inherit flux-ota core-image
 inherit builder-base
