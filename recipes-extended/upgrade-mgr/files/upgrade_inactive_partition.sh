@@ -39,10 +39,26 @@ mkdir -p /tmp/sysroot_b
 mount ${uproot} /tmp/sysroot_b
 #if failed
 testval=$?
+if [ ! -d /tmp/sysroot_b/ostree/repo ]; then
+	testval=1
+else
+	if [ -d /tmp/sysroot_b/boot ];then
+		mount ${upboot} /tmp/sysroot_b/boot
+		testval=$?
+	else
+		testval=1
+	fi
+fi
 if [ $testval -ne 0 ]; then
-	dd if=${runroot} of=${uproot} bs=1M
+	umount ${upboot}
+	umount ${uproot}
+	dd if=${runroot} of=${uproot} bs=1M status=progress
 	e2label ${uproot} ${label_pre}otaroot${label_append}
+	sleep 0.5
+	e2label ${uproot} ${label_pre}otaroot${label_append}
+	sync
 	mount ${uproot} /tmp/sysroot_b
+	testval=$?
 	if [ $testval -ne 0 ]; then
 		echo "Fatal error on "${uproot}
 		cleanup
@@ -51,13 +67,12 @@ if [ $testval -ne 0 ]; then
 		echo "Fatal error on "${uproot}/ostree
 		cleanup
 	fi
-fi
-mount ${upboot} /tmp/sysroot_b/boot
-#if failed
-testval=$?
-if [ $testval -ne 0 ]; then
-	dd if=${runboot} of=${upboot} bs=1M
+
+	dd if=${runboot} of=${upboot} bs=1M status=progress
 	e2label ${upboot} ${label_pre}otaboot${label_append}
+	sleep 0.5
+	e2label ${upboot} ${label_pre}otaboot${label_append}
+	sync
 	mount ${upboot} /tmp/sysroot_b/boot
 	testval=$?
 	if [ $testval -ne 0 ]; then
