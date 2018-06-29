@@ -1,0 +1,88 @@
+From 2626efd5bf14774b66122cdad554b02a490c125a Mon Sep 17 00:00:00 2001
+From: Kevin Hao <kexin.hao@windriver.com>
+Date: Tue, 26 Jun 2018 20:30:51 +0800
+Subject: [PATCH] arm: seco: Use the new binding style for the BT device node
+
+The "kim" and "btwilink" binding methods are deprecated and already
+don't work after the commit c0bd1b9e5895 ("Revert "ti-st: add device
+tree support""). Use the new binding method as indicated in
+ti-bluetooth.txt.
+
+Signed-off-by: Kevin Hao <kexin.hao@windriver.com>
+---
+ arch/arm/boot/dts/imx6sx-seco-b08.dtsi | 16 +++++-----------
+ arch/arm/boot/dts/imx6sx-seco-c23.dtsi | 17 +++++------------
+ 2 files changed, 10 insertions(+), 23 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6sx-seco-b08.dtsi b/arch/arm/boot/dts/imx6sx-seco-b08.dtsi
+index 5e23d558a4b0..ff39a085b854 100644
+--- a/arch/arm/boot/dts/imx6sx-seco-b08.dtsi
++++ b/arch/arm/boot/dts/imx6sx-seco-b08.dtsi
+@@ -129,17 +129,6 @@
+ 		status = "okay";
+ 	};
+ 
+-	kim {
+-	        compatible = "kim";
+-	        nshutdown_gpio = <49>;  // GPIO2_17 The wl8 driver expects gpio to be an integer, so gpio2_17 is (2-1)*32+17=49
+-	        dev_name = "/dev/ttymxc2";
+-	        flow_cntrl = <1>;
+-	        baud_rate = <921600>;
+-	};
+-
+-	btwilink {
+-	        compatible = "btwilink";
+-	};
+ 
+         sound-spdif {
+                 compatible = "fsl,imx-audio-spdif";
+@@ -789,6 +778,11 @@
+ 	fsl,uart-has-rtscts;
+ 	dma-names = "","tx";
+ 	status = "okay";
++
++	bluetooth {
++	        compatible = "ti,wl1831-st";
++		enable-gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &uart6 {
+diff --git a/arch/arm/boot/dts/imx6sx-seco-c23.dtsi b/arch/arm/boot/dts/imx6sx-seco-c23.dtsi
+index f471a3494d63..aa422b1a36e8 100644
+--- a/arch/arm/boot/dts/imx6sx-seco-c23.dtsi
++++ b/arch/arm/boot/dts/imx6sx-seco-c23.dtsi
+@@ -153,18 +153,6 @@
+ 		status = "okay";
+ 	};
+ 
+-	kim {
+-	        compatible = "kim";
+-	        nshutdown_gpio = <39>;  // GPIO2_7 The wl8 driver expects gpio to be an integer, so gpio2_7 is (2-1)*32+7=39
+-	        dev_name = "/dev/ttymxc3";
+-	        flow_cntrl = <1>;
+-	        baud_rate = <921600>;
+-	};
+-
+-	btwilink {
+-	        compatible = "btwilink";
+-	};
+-
+         sound-spdif {
+                 compatible = "fsl,imx-audio-spdif";
+                 model = "imx-spdif";
+@@ -808,6 +796,11 @@
+ 	fsl,uart-has-rtscts;
+ 	dma-names = "","tx";
+ 	status = "okay";
++
++	bluetooth {
++	        compatible = "ti,wl1831-st";
++		enable-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &uart5 { 
+-- 
+2.14.3
+
