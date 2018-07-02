@@ -1,0 +1,37 @@
+From c4462e6b178fc4b6f215b9b7e7d7a92f8fb72aa5 Mon Sep 17 00:00:00 2001
+From: Jiang Lu <lu.jiang@windriver.com>
+Date: Mon, 2 Jul 2018 17:54:22 +0800
+Subject: [PATCH] seco_b08:cleanup uboot env
+
+Cleanup unnecessary in uboot env.
+
+Signed-off-by: Jiang Lu <lu.jiang@windriver.com>
+---
+ include/configs/seco_b08.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/configs/seco_b08.h b/include/configs/seco_b08.h
+index cd841cb62b..4ecb789b48 100644
+--- a/include/configs/seco_b08.h
++++ b/include/configs/seco_b08.h
+@@ -226,7 +226,6 @@
+ 	"console=ttymxc0\0" \
+ 	"fdt_high=0xffffffff\0" \
+ 	"initrd_high=0xffffffff\0" \
+-	"fdt_file=imx6sx-seco-b08-full-lvds7.dtb\0" \
+ 	"fdt_addr=0x83000000\0" \
+ 	"boot_fdt=try\0" \
+ 	"ip_dyn=yes\0" \
+@@ -283,7 +282,8 @@
+ 			"bootz; " \
+ 		"fi;\0" \
+ 	"rollback=setenv rollback_f yes;boot;\0" \
+-	"wdttimeout=120000\0"
++	"skip_script_wd=no\0" \
++	"skip_script_fdt=no\0"
+ 
+ #define CONFIG_BOOTCOMMAND \
+ 	   "mmc dev ${mmcdev};" \
+-- 
+2.14.3
+
