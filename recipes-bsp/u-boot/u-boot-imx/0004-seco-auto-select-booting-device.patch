@@ -25,7 +25,7 @@ index 572be48..aca13e1 100644
 +		break;
 +	case 2:
 +		puts("Boot from eMMC\n");
-+		setenv("labelpre", "emmc_");
++		setenv("labelpre", "_hd");
 +		dev_no = 1;
 +		break;
 +	default:

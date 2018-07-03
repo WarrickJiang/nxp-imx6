@@ -29,9 +29,9 @@ if [ x${partroot} = 'x8' ]; then
 	label_append=''
 fi
 label_pre=""
-teststr=`grep "emmc_" /proc/cmdline`
+teststr=`grep "_hd" /proc/cmdline`
 if [ -n "${teststr}" ]; then
-	label_pre="emmc_"
+	label_pre="_hd"
 fi
 
 #Mount backup device
@@ -53,9 +53,9 @@ if [ $testval -ne 0 ]; then
 	umount ${upboot}
 	umount ${uproot}
 	dd if=${runroot} of=${uproot} bs=1M status=progress
-	e2label ${uproot} ${label_pre}otaroot${label_append}
+	e2label ${uproot} otaroot${label_append}${label_pre}
 	sleep 0.5
-	e2label ${uproot} ${label_pre}otaroot${label_append}
+	e2label ${uproot} otaroot${label_append}${label_pre}
 	sync
 	mount ${uproot} /tmp/sysroot_b
 	testval=$?
@@ -69,9 +69,9 @@ if [ $testval -ne 0 ]; then
 	fi
 
 	dd if=${runboot} of=${upboot} bs=1M status=progress
-	e2label ${upboot} ${label_pre}otaboot${label_append}
+	e2label ${upboot} otaboot${label_append}${label_pre}
 	sleep 0.5
-	e2label ${upboot} ${label_pre}otaboot${label_append}
+	e2label ${upboot} otaboot${label_append}${label_pre}
 	sync
 	mount ${upboot} /tmp/sysroot_b/boot
 	testval=$?
