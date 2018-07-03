@@ -236,13 +236,15 @@ EOF
 		cd - >/dev/null 2>&1
 	fi
 	if [ $CREATE_EMMC -eq 1 ]; then
+		label_append="_hd"
 		echo "reset label for eMMC"
-		e2label ${device}p5 emmc_otaboot
-		e2label ${device}p6 emmc_otaroot
-		e2label ${device}p7 emmc_otaboot_b
-		e2label ${device}p8 emmc_otaroot_b
-		e2label ${device}p3 emmc_fluxdata
+		e2label ${device}p5 otaboot${label_append}
+		e2label ${device}p6 otaroot${label_append}
+		e2label ${device}p7 otaboot_b${label_append}
+		e2label ${device}p8 otaroot_b${label_append}
+		e2label ${device}p3 fluxdata${label_append}
 	fi
+	sync
 }
 
 if ! [ -e "/z" ]; then

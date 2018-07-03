@@ -3,6 +3,8 @@
 sd=mmcblk0
 emmc=mmcblk2
 
+label_append="_hd"
+
 #dd basic part
 sd3=${sd}p3
 test=`fdisk -l /dev/${sd} |awk '/'$sd3'/{print $2}'`
@@ -35,17 +37,17 @@ umount /tmp/mnt0
 umount /tmp/mnt1
 sync
 rm -rf /tmp/mnt0 /tmp/mnt1
-e2label /dev/${emmc}p3 emmc_fluxdata
+e2label /dev/${emmc}p3 fluxdata${label_append}
 sleep 0.5
-e2label /dev/${emmc}p5 emmc_otaboot
+e2label /dev/${emmc}p5 otaboot${label_append}
 sleep 0.5
-e2label /dev/${emmc}p6 emmc_otaroot
+e2label /dev/${emmc}p6 otaroot${label_append}
 sleep 0.5
-e2label /dev/${emmc}p6 emmc_otaroot
+e2label /dev/${emmc}p6 otaroot${label_append}
 sleep 0.5
-e2label /dev/${emmc}p7 emmc_otaboot_b
+e2label /dev/${emmc}p7 otaboot_b${label_append}
 sleep 0.5
-e2label /dev/${emmc}p8 emmc_otaroot_b
+e2label /dev/${emmc}p8 otaroot_b${label_append}
 sleep 0.5
-e2label /dev/${emmc}p8 emmc_otaroot_b
+e2label /dev/${emmc}p8 otaroot_b${label_append}
 sync
