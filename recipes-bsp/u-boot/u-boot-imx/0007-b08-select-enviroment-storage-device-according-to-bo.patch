@@ -1,0 +1,40 @@
+From 7ec4cddc6bd4716dacd9be7ab23fe7a66ed0e14d Mon Sep 17 00:00:00 2001
+From: Jiang Lu <lu.jiang@windriver.com>
+Date: Fri, 13 Jul 2018 17:27:15 +0800
+Subject: [PATCH] b08:select enviroment storage device according to boot device
+
+Select mmc enviorment storage device according to boot device.
+Signed-off-by: Jiang Lu <lu.jiang@windriver.com>
+---
+ board/freescale/b08/b08.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/board/freescale/b08/b08.c b/board/freescale/b08/b08.c
+index 03ca0696a0..c3d4e44d2c 100644
+--- a/board/freescale/b08/b08.c
++++ b/board/freescale/b08/b08.c
+@@ -801,6 +801,21 @@ int mmc_get_env_devno(void)
+ 	return dev_no;
+ }
+ 
++int board_mmc_get_env_dev(void)
++{
++	u32 dev_no = mmc_get_env_devno();
++
++	switch (dev_no) {
++	case 0:
++		return 0;
++	case 2:
++		return 1;
++	default:
++		puts("Boot from unknown device\n");
++		return 0;
++	}
++}
++
+ int mmc_map_to_kernel_blk(int dev_no)
+ {
+ 	return dev_no + 1;
+-- 
+2.14.3
+

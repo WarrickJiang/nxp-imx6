@@ -16,6 +16,7 @@ SRC_URI += "file://0001-net-Use-packed-structures-for-networking.patch \
 	file://0004-seco-auto-select-booting-device.patch \
 	file://0005-seco_b08-enable-watchdog-before-booting-OS.patch \
 	file://0006-seco_b08-cleanup-uboot-env.patch \
+	file://0007-b08-select-enviroment-storage-device-according-to-bo.patch \
 "
 
 S = "${WORKDIR}/git"
