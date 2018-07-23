@@ -1,0 +1,17 @@
+diff --git a/arch/arm/boot/dts/imx6sx-seco-c23.dtsi b/arch/arm/boot/dts/imx6sx-seco-c23.dtsi
+index aa422b1..5e53ce5 100644
+--- a/arch/arm/boot/dts/imx6sx-seco-c23.dtsi
++++ b/arch/arm/boot/dts/imx6sx-seco-c23.dtsi
+@@ -816,6 +816,12 @@
+ 	status = "okay";
+ };
+ 
++&pcie {
++  pinctrl-names = "default";
++  reset-gpio = <&gpio4 6 0>;
++  status = "okay";
++}; 
++
+ &usbotg1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usb_otg1_id>;

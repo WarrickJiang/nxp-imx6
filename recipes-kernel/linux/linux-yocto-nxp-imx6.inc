@@ -8,7 +8,8 @@ SRC_URI += " \
 	file://0004-b08-update-usb3503-hub-driver.patch \
 	file://0005-C23-Add-preliminary-support-for-C23-board.patch \
 	file://0006-imx-watchdog-disable-start-up-checking.patch \
-        file://0001-arm-seco-Use-the-new-binding-style-for-the-BT-device.patch \
+	file://0001-arm-seco-Use-the-new-binding-style-for-the-BT-device.patch \
+	file://0007-enable-pcie-m2.patch \
 	file://seco_b08.cfg \
 "
 
