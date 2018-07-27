@@ -9,7 +9,4 @@ IMAGE_INSTALL += "mtdev"
 IMAGE_INSTALL += "libmodbus"
 IMAGE_INSTALL += "nodejs"
 
-# Watchdog
-IMAGE_INSTALL += "watchdog"
-
 IMAGE_INSTALL += "upgrade-mgr"
