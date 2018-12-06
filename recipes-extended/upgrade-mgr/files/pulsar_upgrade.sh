@@ -1,8 +1,8 @@
 #!/bin/sh
 
 cleanup() {
-umount ${upboot} /tmp/sysroot_b/boot
-umount ${uproot} /tmp/sysroot_b
+umount ${upboot}
+umount ${uproot}
 rm -rf /tmp/sysroot_b
 exit
 }
@@ -52,10 +52,7 @@ fi
 if [ $testval -ne 0 ]; then
 	umount ${upboot}
 	umount ${uproot}
-	dd if=${runroot} of=${uproot} bs=1M status=progress
-	e2label ${uproot} otaroot${label_append}${label_pre}
-	sleep 0.5
-	e2label ${uproot} otaroot${label_append}${label_pre}
+	dd if=${runroot} of=${uproot} bs=1M status=progress conv=fsync
 	sync
 	mount ${uproot} /tmp/sysroot_b
 	testval=$?
@@ -68,10 +65,7 @@ if [ $testval -ne 0 ]; then
 		cleanup
 	fi
 
-	dd if=${runboot} of=${upboot} bs=1M status=progress
-	e2label ${upboot} otaboot${label_append}${label_pre}
-	sleep 0.5
-	e2label ${upboot} otaboot${label_append}${label_pre}
+	dd if=${runboot} of=${upboot} bs=1M status=progress conv=fsync
 	sync
 	mount ${upboot} /tmp/sysroot_b/boot
 	testval=$?
@@ -80,6 +74,39 @@ if [ $testval -ne 0 ]; then
 		cleanup
 	fi
 fi
+#Since label is very important, check it every time
+#get label for upboot & ubroot part and check
+uplabel=`e2label ${uproot}`
+expectlabel="otaroot${label_append}${label_pre}"
+counter=0
+until [ "x${uplabel}" = "x${expectlabel}" ]; do
+	if [ ${counter} -ge 5 ]; then
+		echo "Fatal error with root label"
+		cleanup
+	fi
+	let counter=counter+1
+	sleep 0.5
+	e2label ${uproot} ${expectlabel}
+	sleep 0.5
+	sync
+	uplabel=`e2label ${uproot}`
+done
+
+uplabel=`e2label ${upboot}`
+expectlabel="otaboot${label_append}${label_pre}"
+counter=0
+until [ "x${uplabel}" = "x${expectlabel}" ]; do
+	if [ ${counter} -ge 5 ]; then
+		echo "Fatal error with boot label"
+		cleanup
+	fi
+	let counter=counter+1
+	sleep 0.5
+	e2label ${upboot} ${expectlabel}
+	sleep 0.5
+	sync
+	uplabel=`e2label ${upboot}`
+done
 
 #TOOD:pull-local
 #ostree pull-local --repo=/tmp/sysroot_b/ostree/repo /sysroot/ostree/repo/ pulsar-linux:cube-gw-ostree-runtime
